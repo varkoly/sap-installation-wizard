@@ -96,13 +96,15 @@ module Y2Sap
 
       # Read profile from the file given as argument to the client
       #
-      # @return [Hash] Profile content
+      # @return [Hash,nil] Profile content or nil if it could not be parsed
       def read_partitioning
         filename = Yast::WFM.Args.first
         return nil if filename.nil? || !File.exist?(filename)
 
         profile = Yast::XML.XMLToYCPFile(filename)
         profile && profile["partitioning"]
+      rescue Yast::XMLDeserializationError
+        nil
       end
 
       # Select a disk with to use
