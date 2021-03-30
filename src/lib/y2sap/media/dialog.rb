@@ -38,6 +38,7 @@ module Y2Sap
 
     #Function to build a dialog to copy the media
     def media_dialog(wizard)
+      textdomain "sap-installation-wizard"
       log.info("-- Start media_dialog ---")
       @has_back = true
       content = Empty()
@@ -89,6 +90,7 @@ module Y2Sap
 
     #Function to build a dialog to copy the installation master
     def inst_master_dialog
+      textdomain "sap-installation-wizard"
       @has_back = false
       instmaster_media = local_media().select {|name| name =~ /Instmaster-/}
       if !instmaster_media.empty?
@@ -131,6 +133,7 @@ module Y2Sap
 
     #Function to build a dialog to copy a sap media
     def sapmedium_dialog
+      textdomain "sap-installation-wizard"
       product_media = local_media().select {|name| !(name =~ /Instmaster-/)}
       if !product_media.empty?
         mediaItems = []
@@ -157,6 +160,7 @@ module Y2Sap
 
     #Function to build a dialog to copy a suplementary media
     def supplement_dialog
+      textdomain "sap-installation-wizard"
       product_media = local_media().select {|name| !(name =~ /Instmaster-/)}
       if !product_media.empty?
         @content_before_input = Frame(_("Ready for use:"), Label(Id(:mediums), Opt(:hstretch), product_media.join("\n")))

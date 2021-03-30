@@ -24,6 +24,7 @@ module Y2Sap
   module ProductsVariables
     # Initialize the global variables
     def init_variables
+      textdomain "sap-installation-wizard"
       @dialog_text = {}
       @dialog_text = {
         nw_inst_type: {

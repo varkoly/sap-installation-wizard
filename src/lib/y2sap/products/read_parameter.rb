@@ -33,6 +33,7 @@ module Y2Sap
     include Y2Autoinstall::Clients::AyastSetup
 
     def read_product_parameter
+      textdomain "sap-installation-wizard"
       log.info("Start read_product_parameter")
       init_envinroment
       log.info("@db #{@db} @product_name #{@product_name} @product_id #{@product_id}")

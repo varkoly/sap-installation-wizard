@@ -33,6 +33,7 @@ module Y2Sap
     include ProductPartitioning
 
     def do_install
+      textdomain "sap-installation-wizard"
       do_collect
       ret = create_partitions(@partitioning_list, @product_list)
       return :abort if (ret == :abort)

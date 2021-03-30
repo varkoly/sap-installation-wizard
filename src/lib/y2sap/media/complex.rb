@@ -27,6 +27,7 @@ module Y2Sap
     include Y2Sap::MediaFind
 
     def installation_master
+      textdomain "sap-installation-wizard"
       log.info("Start Y2Sap MediaComplex installation_master ---")
       ret = nil
       run = true
@@ -80,6 +81,7 @@ module Y2Sap
     end
 
     def net_weaver
+      textdomain "sap-installation-wizard"
       log.info("-- Start net_weaver ---")
       if !@sap_cds_url.empty?
         # Skip the dialog all together if SAP_CD is already mounted from network location
@@ -126,6 +128,7 @@ module Y2Sap
     end
 
     def suplementary
+      textdomain "sap-installation-wizard"
       log.info("-- Start ReadSupplementMedium ---")
       run = Yast::Popup.YesNo(_("Do you use a Supplement/3rd-Party SAP software medium?"))
       while run

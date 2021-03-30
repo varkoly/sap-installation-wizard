@@ -30,6 +30,7 @@ module Y2Sap
     include Yast::UI
     include Yast::UIShortcuts
     def select_nw_product
+      textdomain "sap-installation-wizard"
       create_content_nw_product
       do_loop_nw_product
     end

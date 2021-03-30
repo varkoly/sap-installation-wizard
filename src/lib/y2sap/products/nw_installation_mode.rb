@@ -30,6 +30,7 @@ module Y2Sap
     include Yast::UI
     include Yast::UIShortcuts
     def select_nw_installation_mode()
+      textdomain "sap-installation-wizard"
       log.info("-- Start select_nw_installation_mode --- for instDir #{@media.inst_dir}" )
       create_content_nw_installation_mode
       do_loop_nw_installation_mode

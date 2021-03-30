@@ -31,8 +31,8 @@ module Y2Sap
     include Yast::UI
     include Yast::UIShortcuts
     def create_partitions(product_partitioning_list, product_list)
+      textdomain "sap-installation-wizard"
       log.info("********Starting partitioning with #{product_partitioning_list} #{product_list}")
-
       ret = nil
       hwinfo = get_hw_info
       manufacturer = Ops.get(hwinfo, 0, "") # "FUJITSU", "IBM", "HP", "Dell Inc."
