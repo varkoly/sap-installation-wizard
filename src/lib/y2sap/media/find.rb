@@ -20,11 +20,12 @@
 # find current contact information at www.novell.com.
 
 module Y2Sap
+  # Module to find the SAP media on the mounted path.
   module MediaFind
     include Yast
 
     def find_sap_media
-      make_hash = proc do |hash,key|
+      make_hash = proc do |hash, key|
         hash[key] = Hash.new(&make_hash)
       end
       @path_map = Hash.new(&make_hash)
@@ -33,29 +34,27 @@ module Y2Sap
       exports
       linux_x86_64
       if @path_map.empty?
-        lf=@base+"/LABEL.ASC"
-        if File.exist?(lf)
-          label=IO.readlines(lf,":")
-          if label.length > 2
-            @path_map[base]=label[1].gsub(/\W/,"-") + label[2].gsub(/\W/,"-") + label[3].chop.gsub(/\W/,"-")
-          end
+        lf = @base + "/LABEL.ASC"
+        next if ! File.exist?(lf)
+        label = IO.readlines(lf,":")
+        if label.length > 2
+          @path_map[base] = label[1].gsub(/\W/, "-") + label[2].gsub(/\W/, "-") + label[3].chop.gsub(/\W/, "-")
         end
       end
       return @path_map
     end
 
     def sap_lup
-      #Searching the SAPLUP
+      # Searching the SAPLUP
       command = "find '" + @base + "' -maxdepth 5 -type d -name 'SL_CONTROLLER_*'"
       out     = SCR.Execute(path(".target.bash_output"), command)
       stdout  = out["stdout"] || ""
       stdout.split("\n").each { |d|
-        lf=d+"/LABEL.ASC"
-        if File.exist?(lf)
-          label=IO.readlines(lf,":")
-          if label.length > 2
-            @path_map[d]=label[1].gsub(/\W/,"-") + label[2].gsub(/\W/,"-")
-          end
+        lf = d+"/LABEL.ASC"
+        next if ! File.exist?(lf)
+        label = IO.readlines(lf, ":")
+        if label.length > 2
+          @path_map[d] = label[1].gsub(/\W/, "-") + label[2].gsub(/\W/, "-")
         end
       }
     end
@@ -66,12 +65,11 @@ module Y2Sap
       out     = SCR.Execute(path(".target.bash_output"), command)
       stdout  = out["stdout"] || ""
       stdout.split("\n").each { |d|
-        lf=d+"/LABEL.ASC"
-        if File.exist?(lf)
-          label=IO.readlines(lf,":")
-          if label.length > 3
-            @path_map[d]=label[4].chop.gsub(/\W/,"-")
-          end
+        lf = d+"/LABEL.ASC"
+        next if ! File.exist?(lf)
+        label = IO.readlines(lf, ":")
+        if label.length > 3
+          @path_map[d] = label[4].chop.gsub(/\W/, "-")
         end
       }
     end
@@ -82,12 +80,11 @@ module Y2Sap
       out     = SCR.Execute(path(".target.bash_output"), command)
       stdout  = out["stdout"] || ""
       stdout.split("\n").each { |d|
-        lf=d+"/LABEL.ASC"
-        if File.exist?(lf)
-          label=IO.readlines(lf,":")
-          if label.length > 3
-            @path_map[d]=label[2].gsub(/\W/,"-") + label[3].gsub(/\W/,"-") + label[4].chop.gsub(/\W/,"-")
-          end
+        lf = d+"/LABEL.ASC"
+        next if ! File.exist?(lf)
+        label = IO.readlines(lf, ":")
+        if label.length > 3
+          @path_map[d] = label[2].gsub(/\W/, "-") + label[3].gsub(/\W/, "-") + label[4].chop.gsub(/\W/, "-")
         end
       }
     end
@@ -97,8 +94,8 @@ module Y2Sap
       media = []
       if File.exist?(@media_dir)
         media = Dir.entries(@media_dir)
-        media.delete('.')
-        media.delete('..')
+        media.delete(".")
+        media.delete("..")
       end
       return media
     end
