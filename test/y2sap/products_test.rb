@@ -32,10 +32,15 @@ describe Y2Sap::Products do
 
   context "no sysconfig file exist" do
     let(:media) { Y2Sap::Media.new }
+
     before do
-      change_scr_root("/")
       subject.media.product_definitions = DATA_PATH + "/system/etc/sap-installation-wizard.xml"
     end
+
+    around do |example|
+      change_scr_root("/", &example)
+    end
+
     it "check the initalization of global variables" do
       expect(subject.products_to_install).to be_a(Array)
       expect(subject.product_map).to be_a(Hash)
@@ -61,10 +66,15 @@ describe Y2Sap::Products do
   end
   context "sysconfig file does exist" do
     let(:media) { Y2Sap::Media.new }
+
     before do
-      change_scr_root(File.join(DATA_PATH, "system"))
       subject.media.product_definitions = DATA_PATH + "/system/etc/sap-installation-wizard.xml"
     end
+
+    around do |example|
+      change_scr_root(File.join(DATA_PATH, "system"), &example)
+    end
+
     it "reads the base configuration from sysconfig file" do
       expect(subject.media.mount_point).to eq "/tmp/mnt"
       expect(subject.media.inst_mode).to   eq "auto"
