@@ -399,74 +399,31 @@ hana_lcm_workflow()
    hana_get_input
    hana_setenv_lcm
 
-   # Does the HANA media have 
-   # 1. a full SPx DVD folder strucure ?
-   # 2. or a selected components folder structure ?
-   # 3. or a selected components folder structure built specifically for B1 ?
-   if [ -d ${MEDIA_TARGET}/Instmaster/DATA_UNITS/HDB_SERVER_LINUX_${ARCH} ]; then
-       # HANA SPx DVD folder structure: check for required HANA components
-       missing=$(hana_check_components)
-       if [ "${ARCH}" = "X86_64" ];then
-           COMPONENTS="HDB_CLIENT_LINUX_${ARCH} HDB_SERVER_LINUX_${ARCH} HDB_AFL_LINUX_${ARCH} HDB_STUDIO_LINUX_${ARCH} HDB_CLIENT_LINUXINTEL"
-           LCM_COMPONENTS=client,afl,studio,server
-       else
-           if [ "${ARCH:0:5}" = "PPC64" ];then
-              COMPONENTS="HDB_CLIENT_LINUX_${ARCH} HDB_SERVER_LINUX_${ARCH} HDB_AFL_LINUX_${ARCH}"
-              LCM_COMPONENTS=client,afl,server
-           else
-              yast_popup_wait "Cannot install HANA. Platform ${ARCH} not supported by SUSE installation wizard."
-              rc=1
-           fi
-       fi
-       cd ${MEDIA_TARGET}/Instmaster/DATA_UNITS/HDB_SERVER_LINUX_${ARCH}
+   if [ "${ARCH}" = "X86_64" ];then
+       LCM_COMPONENTS=client,afl,studio,server
    else
-       if [ -d ${MEDIA_TARGET}/Instmaster/DATA_UNITS/SAP_HANA_DATABASE ]; then
-           # check for required HANA components
-           if [ "${ARCH}" = "X86_64" ];then
-              COMPONENTS='SAP_HANA_AFL SAP_HANA_CLIENT SAP_HANA_CLIENT32 SAP_HANA_DATABASE SAP_HANA_STUDIO'
-              LCM_COMPONENTS=client,afl,studio,server
-           else
-              if [ "${ARCH:0:5}" = "PPC64" ];then
-                 COMPONENTS='SAP_HANA_AFL SAP_HANA_CLIENT SAP_HANA_DATABASE'
-                 LCM_COMPONENTS=client,afl,server
-              else
-                 yast_popup_wait "Cannot install HANA. Platform ${ARCH} not supported by SUSE installation wizard."
-                 rc=1
-              fi
-           fi
-           missing=$(hana_check_components)
-           LCM_COMPONENTS=client,afl,studio,server
-           cd ${MEDIA_TARGET}/Instmaster/DATA_UNITS/SAP_HANA_DATABASE
+       if [ "${ARCH:0:5}" = "PPC64" ];then
+          LCM_COMPONENTS=client,afl,server
        else
-           if [ -d ${MEDIA_TARGET}/Instmaster/DATA_UNITS/SAP\ HANA\ DATABASE\ 1.0\ FOR\ B1 ]; then
-              LCM_COMPONENTS=all
-              LCM_COMPONENTS_ROOT="--component_root=${MEDIA_TARGET}/Instmaster/DATA_UNITS"
-              cd ${MEDIA_TARGET}/Instmaster/DATA_UNITS/SAP\ HANA\ DATABASE\ 1.0\ FOR\ B1/LINX64SUSE/SAP_HANA_DATABASE
-           else
-              missing='for full Service Pack: HDB_SERVER_LINUX_${ARCH}\nfor Revision Update: SAP_HANA_DATABASE'
-           fi
+          yast_popup_wait "Cannot install HANA. Platform ${ARCH} not supported by SUSE installation wizard."
+          rc=1
        fi
    fi
-
-   if [ ! -z "${missing}" ]; then
-       yast_popup_wait "Cannot install HANA. The following folders are expected on the media:\n${missing}"
-       rc=1
-   else
-      case $A_SAPMDC in
-	no )
-	  echo -e "db_mode=\n"  > ${MEDIA_TARGET}/hana_mdc.conf
-	;;
-	low )
-	  echo -e "db_mode=multidb\ndb_isolation=low\n"  > ${MEDIA_TARGET}/hana_mdc.conf
-	;;
-	high )
-	  echo -e "db_mode=multidb\ndb_isolation=high\n"  > ${MEDIA_TARGET}/hana_mdc.conf
-	;;
-      esac
-      cat ~/pwds.xml | ./hdblcm --batch --action=install ${LCM_COMPONENTS_ROOT} --components=${LCM_COMPONENTS} --sid=${SID} --number=${SAPINSTNR} --read_password_from_stdin=xml --configfile=${MEDIA_TARGET}/hana_mdc.conf
-      rc=$?
-      rm  ~/pwds.xml
-   fi
+   case $A_SAPMDC in
+     no )
+       echo -e "db_mode=\n"  > ${MEDIA_TARGET}/hana_mdc.conf
+     ;;
+     low )
+       echo -e "db_mode=multidb\ndb_isolation=low\n"  > ${MEDIA_TARGET}/hana_mdc.conf
+     ;;
+     high )
+       echo -e "db_mode=multidb\ndb_isolation=high\n"  > ${MEDIA_TARGET}/hana_mdc.conf
+     ;;
+   esac
+   cd "${HDBLCMDIR}"
+   cat ~/pwds.xml | ./hdblcm --batch --action=install ${LCM_COMPONENTS_ROOT} --components=${LCM_COMPONENTS} --sid=${SID} --number=${SAPINSTNR} --read_password_from_stdin=xml --configfile=${MEDIA_TARGET}/hana_mdc.conf
+   rc=$?
+   rm  ~/pwds.xml
    return $rc
 }
 
@@ -542,7 +499,9 @@ extract_media_archives()
    # HANA 1.0 <= SP6: Unified Installer
    # HANA 1.0 => SP7: Life Cycle Manager (hdblcm)
    extract_media_archives
-   HDBLCM=`find ${MEDIA_TARGET}/Instmaster/DATA_UNITS/ -name hdblcm`
+   # Find the installer
+   export HDBLCM=$(find ${SAPCD_INSTMASTER}/ -name hdblcm | grep -m 1 -P 'DATABASE|SERVER')
+   export HDBLCMDIR=$(dirname "${HDBLCM}")
    if [ -n "${HDBLCM}" ]; then
       hana_lcm_workflow
    else
