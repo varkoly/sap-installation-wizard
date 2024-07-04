@@ -123,12 +123,6 @@ module Yast
       #The type of the actual read installation master
       @instMasterType
 
-      #The version of the actual installation master
-      @instMasterVersion
-
-      #The path to the actual installation master
-      @instMasterPath
-
       #The control hash for sap media
       @SAPMediaTODO = {}
 
@@ -244,9 +238,8 @@ module Yast
                                    mediaList << @mediaDir + "/" + label
                                  }
                  else
-                     @instMasterType    = instMasterList[0]
-                     @instMasterPath    = instMasterList[1]
-                     @instMasterVersion = instMasterList[2]
+                     @instMasterType = instMasterList[0]
+                     @instMasterPath = instMasterList[1]
                      CopyFiles(@instMasterPath, @instDir, "Instmaster", false)
                      mediaList << @instDir + "/" + "Instmaster"
                  end
@@ -272,14 +265,11 @@ module Yast
              @DB           = "HANA"
              @PRODUCT_NAME = @instMasterType
              @PRODUCT_ID   = @instMasterType
-	     if( @PRODUCT_NAME == "HANA" && @instMasterVersion == "1.0" )
-                 @PRODUCT_ID   = "HANA1.0"
-             end
 	     if ! prod.has_key?("sapMasterPW") or ! prod.has_key?("sid") or ! prod.has_key?("sapInstNr")
 	        Popup.Error("Some of the required parameters are not defined.")
 		next
 	     end
-	     if @PRODUCT_ID == "HANA1.0" && ! prod.has_key?("sapMDC")
+	     if ! prod.has_key?("sapMDC")
                   prod["sapMDC"] = "no"
 	     end
 	     File.write(@instDir + "/ay_q_masterPwd", prod["sapMasterPW"])
@@ -310,7 +300,7 @@ module Yast
             when "HANA"
 	       SCR.Execute(path(".target.bash"), "chgrp sapinst " + @instDir + ";" + "chmod 775 " + @instDir)
 	       script = " /usr/share/YaST2/include/sap-installation-wizard/hana_inst.sh -g"
-            when "B1"
+            when /^B1/
 	       SCR.Execute(path(".target.bash"), "chgrp sapinst " + @instDir + ";" + "chmod 775 " + @instDir)
 	       script = " /usr/share/YaST2/include/sap-installation-wizard/b1_inst.sh -g"
 	    when "TREX"
@@ -447,10 +437,10 @@ module Yast
         when "SAPINST"
           ret = :SAPINST
         when "HANA"
+          @instMasterType = "HANA"
           @mediaDir = @instDir
           ret = :HANA
         when /^B1/
-          @instMasterType = "B1"
           @mediaDir = @instDir
           ret = :B1
         when "TREX"
@@ -1215,7 +1205,6 @@ module Yast
     publish :variable => :instDir,           :type => "string"
     publish :variable => :instDirBase,       :type => "string"
     publish :variable => :instMasterType,    :type => "string"
-    publish :variable => :instMasterVersion, :type => "string"
     publish :variable => :instMode,          :type => "string"
     publish :variable => :exportSAPCDs,      :type => "string"
     publish :variable => :mountPoint,        :type => "string"

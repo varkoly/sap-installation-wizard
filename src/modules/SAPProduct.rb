@@ -62,13 +62,6 @@ module Yast
                        "script_name"  => SAPXML.ConfigValue("HANA","script_name")
       }
       @productList << {
-                       "name"         => "HANA",
-		       "id"           => "HANA1.0",
-		       "ay_xml"       => SAPXML.ConfigValue("HANA1.0","ay_xml"),
-                       "partitioning" => SAPXML.ConfigValue("HANA","partitioning"),
-                       "script_name"  => SAPXML.ConfigValue("HANA","script_name")
-      }
-      @productList << {
                        "name"         => "B1",
                        "id"           => "B1",
                        "ay_xml"       => SAPXML.ConfigValue("B1","ay_xml"),
@@ -313,7 +306,7 @@ module Yast
         when "HANA"
            @DB           = "HDB"
            @PRODUCT_NAME = "HANA"
-	   @PRODUCT_ID   = SAPMedia.instMasterVersion == "1.0" ? "HANA1.0" : "HANA"
+           @PRODUCT_ID   = "HANA"
         when /^B1/
            @DB           = ""
            @PRODUCT_NAME = "B1"
@@ -341,12 +334,17 @@ module Yast
       xml_path       = GetProductParameter("ay_xml")         == "" ? ""   : SAPMedia.ayXMLPath + '/' +  GetProductParameter("ay_xml")
       partitioning   = GetProductParameter("partitioning")   == "" ? "NO" : GetProductParameter("partitioning")
 
-      if @PRODUCT_NAME == "B1"
-         SCR.Execute(path(".target.bash"), "/usr/share/YaST2/include/sap-installation-wizard/b1_hana_list.sh " + SAPMedia.instDir )
-      end
       if File.exist?( xml_path )
         SCR.Execute(path(".target.bash"), "sed -i.back s/##VirtualHostname##/" + my_hostname + "/g " + xml_path )
+	if @PRODUCT_NAME == "B1"
+	   out       = Convert.to_map( SCR.Execute(path(".target.bash_output"), "/usr/share/YaST2/include/sap-installation-wizard/b1_hana_list.sh"))
+           selection = Ops.get_string(out, "stdout", "").chomp
+	   SCR.Execute(path(".target.bash"), "sid -i.back 's#<default>___SAPSID___</default>#" + selection + "#' " + xml_path)
+	end
         SAPMedia.ParseXML(xml_path)
+	if File.exist?( xml_path + ".back" )
+	   SCR.Execute(path(".target.bash"), "mv " + xml_path + ".back " + xml_path )
+	end
         if File.exist?("/tmp/ay_q_sid")
            sid = IO.read("/tmp/ay_q_sid").chomp    
         end
@@ -562,7 +560,7 @@ module Yast
     #
     ############################################################
     def GetProductParameter(productParameter)
-      Builtins.y2milestone("-- Start SAPProduct GetProductParameter -- %1 %2",@PRODUCT_ID,productParameter)
+      Builtins.y2milestone("-- Start SAPProduct GetProductParameter --")
       @productList.each { |p|
           if p["id"] == @PRODUCT_ID
              return p.has_key?(productParameter) ? p[productParameter] : ""
