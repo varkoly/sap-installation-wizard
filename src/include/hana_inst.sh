@@ -400,10 +400,10 @@ hana_lcm_workflow()
    hana_setenv_lcm
 
    if [ "${ARCH}" = "X86_64" ];then
-       LCM_COMPONENTS=client,afl,studio,server
+       LCM_COMPONENTS=all
    else
        if [ "${ARCH:0:5}" = "PPC64" ];then
-          LCM_COMPONENTS=client,afl,server
+          LCM_COMPONENTS=all
        else
           yast_popup_wait "Cannot install HANA. Platform ${ARCH} not supported by SUSE installation wizard."
           rc=1
@@ -421,7 +421,7 @@ hana_lcm_workflow()
      ;;
    esac
    cd "${HDBLCMDIR}"
-   cat ~/pwds.xml | ./hdblcm --batch --action=install ${LCM_COMPONENTS_ROOT} --components=${LCM_COMPONENTS} --sid=${SID} --number=${SAPINSTNR} --read_password_from_stdin=xml --configfile=${MEDIA_TARGET}/hana_mdc.conf
+   cat ~/pwds.xml | ./hdblcm --batch --action=install --components=${LCM_COMPONENTS} --sid=${SID} --number=${SAPINSTNR} --read_password_from_stdin=xml --configfile=${MEDIA_TARGET}/hana_mdc.conf
    rc=$?
    rm  ~/pwds.xml
    return $rc
