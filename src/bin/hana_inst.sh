@@ -191,6 +191,7 @@ cleanup() {
     rm -f  ${MEDIA_TARGET}/ay_*
     rm -rf ${SAPCD_INSTMASTER}
     rm -rf ${TMPDIR}
+    rm  ~/pwds.xml
   fi
 }
 
@@ -263,27 +264,28 @@ hana_lcm_workflow()
    if [ -z "${XS_ROUTING_MODE}" -o -z "${XS_DOMAIN_NAME}" -o "${XS_ROUTING_MODE}" == "ports" ]; then
        cat ~/pwds.xml | ./hdblcm --batch --action=install \
             --ignore=$TOIGNORE \
-            --lss_trust_unsigned_server \
+            --lss_trust_unsigned_components \
             --components=all \
             --sid=${SID} \
             --number=${SAPINSTNR} \
             --groupid=79 \
+            --lss_userid=800 \
             --read_password_from_stdin=xml \
             --xs_routing_mode=ports
    else
        cat ~/pwds.xml | ./hdblcm --batch --action=install \
             --ignore=$TOIGNORE \
-            --lss_trust_unsigned_server \
+            --lss_trust_unsigned_components \
             --components=all \
             --sid=${SID} \
             --number=${SAPINSTNR} \
             --groupid=79 \
+            --lss_userid=800 \
             --read_password_from_stdin=xml \
             --xs_routing_mode=${XS_ROUTING_MODE} \
 	    --xs_domain_name="${XS_DOMAIN_NAME}"
    fi
    rc=$?
-   rm  ~/pwds.xml
    return $rc
 }
 
