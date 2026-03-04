@@ -60,7 +60,7 @@ Authors:
 Summary:        Installation wizard for SAP Business One applications
 License:        GPL-2.0+
 Group:          System/YaST
-Version:        4.7.2
+Version:        4.7.3
 Release:        0
 PreReq:         /bin/mkdir %fillup_prereq yast2
 BuildRequires:  yast2
