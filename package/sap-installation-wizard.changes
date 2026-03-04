@@ -5,14 +5,14 @@ Fri Feb 27 13:45:42 UTC 2026 - Peter Varkoly <varkoly@suse.com>
   o Add install parameter --lss_userid=800
   o Replace deprecated parameter --lss_trust_unsigned_server by the new paramter --lss_trust_unsigned_components
   o Do not remove passwd.xml file also if cleanup is not wanted
-- 4.7.3
+- 4.6.19
 
 -------------------------------------------------------------------
 Mon Mar 17 19:36:12 UTC 2025 - Peter Varkoly <varkoly@suse.com>
 
 - bone-installation-wizard: missing landscape server address (bsc#1239627)
   Add SLD_SERVER_ADDR=${HOSTNAME} parameter
-- 4.7.2
+- 4.6.18
 
 -------------------------------------------------------------------
 Mon Feb 24 06:57:04 UTC 2025 - Peter Varkoly <varkoly@suse.com>
@@ -21,16 +21,16 @@ Mon Feb 24 06:57:04 UTC 2025 - Peter Varkoly <varkoly@suse.com>
   (bsc#1233822)
   Set CONNECTION_SSL_CERTIFICATE_VERIFICATION=false
 - Fixing bsc#1226752. Read the hash value.
-- bone-installation-wizard: hostname issue (B1 hostname differs from HANA)
+- 4.6.17
+
+--------------------------------------------------------------------
+Tue Sep 10 11:13:32 UTC 2024 - Peter Varkoly <varkoly@suse.com>
+
+-  bone-installation-wizard: hostname issue (B1 hostname differs from HANA)
   (bsc#1230165) Set the host name instead of the IP address and instead of the default values for all occurrences.
   o Use FQHN for BCKP_HANA_SERVERS, HANA_DATABASE_SERVER, HANA_DATABASE_LOCATION and LOCAL_ADDRESS
   o Add SL_** and WEBCLIENT parameters
-- 4.7.1
-
--------------------------------------------------------------------
-Fri Sep 06 07:14:32 UTC 2024 - Ladislav Slezák <lslezak@suse.com>
-
-- Branch package for SP7 (bsc#1230201)
+- 4.6.16 
 
 -------------------------------------------------------------------
 Tue Jun 11 16:59:03 UTC 2024 - Peter Varkoly <varkoly@suse.com>
