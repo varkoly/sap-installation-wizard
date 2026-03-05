@@ -30,15 +30,9 @@ jobs:
 
     - name: Unit Tests
       run: rake test:unit
-      # enable code coverage reporting
+      # disable code coverage reporting
       env:
-        COVERAGE: 1
-
-    # send the coverage report to coveralls.io
-    - name: Coveralls Report
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        COVERAGE: 0
 
   Rubocop:
     runs-on: ubuntu-latest
