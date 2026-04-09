@@ -241,12 +241,16 @@ hana_lcm_workflow()
    hana_volumes
    hana_get_input
    hana_setenv_lcm
+   LSS_PARAM="--lss_trust_unsigned_server"
 
    # Detect if it is a B1 installation
    B1=$(find ${SAPCD_INSTMASTER}/ -maxdepth 1 -type f -exec grep FOR.B1 {} \;)
    if [ -n "$B1" -a ! -d ${SAPCD_INSTMASTER}/SAP_HANA_DATABASE ]; then
      # Move the component directories into the first level
      find ${SAPCD_INSTMASTER}/DATA_UNITS/  -type d -name "SAP_HANA_*" -exec mv {} ${SAPCD_INSTMASTER}/ \;
+   fi
+   if [ -n "$B1" ]; then
+     LSS_PARAM="--lss_trust_unsigned_components"
    fi
    # Find the installer
    HDBLCM=$(find ${SAPCD_INSTMASTER}/ -name hdblcm | grep -m 1 -P 'DATABASE|SERVER')
@@ -264,7 +268,7 @@ hana_lcm_workflow()
    if [ -z "${XS_ROUTING_MODE}" -o -z "${XS_DOMAIN_NAME}" -o "${XS_ROUTING_MODE}" == "ports" ]; then
        cat ~/pwds.xml | ./hdblcm --batch --action=install \
             --ignore=$TOIGNORE \
-            --lss_trust_unsigned_components \
+            ${LSS_PARAM} \
             --components=all \
             --sid=${SID} \
             --number=${SAPINSTNR} \
@@ -275,7 +279,7 @@ hana_lcm_workflow()
    else
        cat ~/pwds.xml | ./hdblcm --batch --action=install \
             --ignore=$TOIGNORE \
-            --lss_trust_unsigned_components \
+            ${LSS_PARAM} \
             --components=all \
             --sid=${SID} \
             --number=${SAPINSTNR} \
