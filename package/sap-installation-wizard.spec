@@ -20,11 +20,7 @@ Name:           sap-installation-wizard
 Summary:        Installation wizard for SAP applications
 License:        GPL-2.0-or-later
 Group:          System/YaST
-<<<<<<< HEAD
 Version:        5.0.8
-=======
-Version:        4.6.20
->>>>>>> SLE-15-SP7
 Release:        0
 PreReq:         %fillup_prereq
 PreReq:         /bin/mkdir
@@ -67,11 +63,7 @@ Authors:
 Summary:        Installation wizard for SAP Business One applications
 License:        GPL-2.0-or-later
 Group:          System/YaST
-<<<<<<< HEAD
 Version:        5.0.8
-=======
-Version:        4.6.20
->>>>>>> SLE-15-SP7
 Release:        0
 PreReq:         %fillup_prereq
 PreReq:         /bin/mkdir
